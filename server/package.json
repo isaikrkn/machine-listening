@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "osc": "^2.4.5",
+    "osc-js": "^2.4.1",
+    "ws": "^8.19.0"
+  },
+  "name": "server",
+  "version": "1.0.0",
+  "main": "bridge.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
