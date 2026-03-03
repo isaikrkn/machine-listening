@@ -4,8 +4,12 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
-  cors: { origin: "*" }
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
 let globalState = {
@@ -14,18 +18,22 @@ let globalState = {
   modulation: 0.5
 };
 
+app.get("/", (req, res) => {
+  res.send("Machine Listening Server Running");
+});
+
 io.on("connection", (socket) => {
 
   socket.emit("stateUpdate", globalState);
 
   socket.on("userInfluence", (data) => {
-    // Promedio colectivo
     globalState.density = (globalState.density + data.density) / 2;
     globalState.energy = (globalState.energy + data.energy) / 2;
     globalState.modulation = (globalState.modulation + data.modulation) / 2;
 
     io.emit("stateUpdate", globalState);
   });
+
 });
 
 const PORT = process.env.PORT || 3000;
