@@ -3,7 +3,7 @@ import { io } from "https://cdn.socket.io/4.5.4/socket.io.esm.min.js";
 
 export class Network {
   constructor(audioEngine) {
-    this.socket = io("https://YOUR_BACKEND_URL");
+    this.socket = io("https://machine-listening.onrender.com");
     this.audioEngine = audioEngine;
 
     this.state = {
