@@ -16,8 +16,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   center = createVector(width / 2, height / 2);
 
-  socket = new WebSocket("ws://localhost:8081");
-
+  new WebSocket("wss://machine-listening.onrender.com");
   socket.onopen = () => {
     console.log("🟢 WebSocket connected");
   };
