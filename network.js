@@ -15,15 +15,25 @@ export class Network {
     this.init();
   }
 
-  init() {
-    this.socket.on("stateUpdate", (globalState) => {
-      this.audioEngine.updateFromNetwork(globalState);
-    });
+    init() {
 
     this.socket.on("connect", () => {
-      console.log("Connected to global ecosystem");
+        console.log("✅ Connected to server:", this.socket.id);
     });
-  }
+
+    this.socket.on("disconnect", () => {
+        console.log("❌ Disconnected from server");
+    });
+
+    this.socket.on("connect_error", (err) => {
+        console.error("⚠️ Connection error:", err.message);
+    });
+
+    this.socket.on("stateUpdate", (globalState) => {
+        console.log("🌍 State received:", globalState);
+        this.audioEngine.updateFromNetwork(globalState);
+    });
+    }
 
   sendLocalInfluence(data) {
     this.socket.emit("userInfluence", data);
