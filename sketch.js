@@ -63,7 +63,7 @@ if (autonomous) {
         density,
         energy,
         anomaly: anomaly ? 1 : 0,
-        autonomous: autonomous ? 1 : 0
+        autonomous: autonomous ? 1 : 0      
         }));
 
   }
