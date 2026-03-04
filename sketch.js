@@ -13,14 +13,10 @@ let autoEnergy = 0.5;
 const NUM_STARS = 400;
 
 function setup() {
-  console.log("p5 setup running");
   createCanvas(windowWidth, windowHeight);
   center = createVector(width / 2, height / 2);
 
-  new WebSocket("wss://machine-listening.onrender.com");
-  socket.onopen = () => {
-    console.log("🟢 WebSocket connected");
-  };
+
 
   // crear estrellas
   for (let i = 0; i < NUM_STARS; i++) {
@@ -31,7 +27,6 @@ function setup() {
 }
 
 function draw() {
-  console.log("drawing frame");
   background(0, 40); // deja estela (ambience visual)
 
     // probabilidad baja de anomalía
@@ -65,7 +60,7 @@ if (autonomous) {
         density,
         energy,
         anomaly: anomaly ? 1 : 0,
-        autonomous: autonomous ? 1 : 0      
+        autonomous: autonomous ? 1 : 0
         }));
 
   }
