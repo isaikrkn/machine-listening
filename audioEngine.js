@@ -28,9 +28,11 @@ this.source = null;
 }
 
 async resume(){
+
 if(this.ctx.state === "suspended"){
 await this.ctx.resume();
 }
+
 }
 
 async load(url){
@@ -55,12 +57,17 @@ this.source.start();
 
 updateFromInteraction(x,y,speed){
 
-// filtro respiración
+// filtro respiración galáctica
 let cutoff = 2000 + x * 6000;
-this.filter.frequency.setTargetAtTime(cutoff,this.ctx.currentTime,0.1);
+this.filter.frequency.setTargetAtTime(
+cutoff,
+this.ctx.currentTime,
+0.15
+);
 
 // distorsión suave
-let amount = speed * 30;
+let amount = speed * 25;
+
 this.distortion.curve = this.makeDistortionCurve(amount);
 
 }
