@@ -1,48 +1,27 @@
-import { AudioEngine } from "./audioEngine.js";
-
 let audio;
-let started=false;
-
-let lastX=0;
-let lastY=0;
+let started = false;
 
 async function init(){
 
-audio = new AudioEngine();
+audio = new Audio("./assets/audio/machine-listening.wav");
 
-await audio.resume();
+audio.loop = true;
+audio.volume = 1.0;
 
-await audio.load("./assets/audio/machine-listening.wav");
-
-audio.playLoop();
+await audio.play();
 
 console.log("galaxy audio started");
 
 }
 
-document.addEventListener("pointerdown",async()=>{
+document.addEventListener("pointerdown", async ()=>{
 
 if(!started){
 
-started=true;
+started = true;
+
 await init();
 
 }
 
-});
-
-document.addEventListener("pointermove",(e)=>{
-
-if(!audio) return;
-
-let x = e.clientX/window.innerWidth;
-let y = e.clientY/window.innerHeight;
-
-let speed = Math.abs(e.movementX)+Math.abs(e.movementY);
-
-audio.updateFromInteraction(x,y,speed*0.01);
-
-lastX=x;
-lastY=y;
-
-});
+});       
