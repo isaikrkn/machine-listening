@@ -1,27 +1,40 @@
-let audio;
+let audioContext;
+let source;
+let buffer;
 let started = false;
 
-async function init(){
+async function initAudio(){
 
-audio = new Audio("./assets/audio/machine-listening.wav");
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-audio.loop = true;
-audio.volume = 1.0;
+  const response = await fetch("./assets/audio/machine-listening.wav");
 
-await audio.play();
+  const arrayBuffer = await response.arrayBuffer();
 
-console.log("galaxy audio started");
+  buffer = await audioContext.decodeAudioData(arrayBuffer);
+
+  source = audioContext.createBufferSource();
+
+  source.buffer = buffer;
+
+  source.loop = true;
+
+  source.connect(audioContext.destination);
+
+  source.start(0);
+
+  console.log("machine listening audio started");
 
 }
 
-document.addEventListener("pointerdown", async ()=>{
+document.addEventListener("pointerdown", async () => {
 
-if(!started){
+  if(!started){
 
-started = true;
+    started = true;
 
-await init();
+    await initAudio();
 
-}
+  }
 
 });
