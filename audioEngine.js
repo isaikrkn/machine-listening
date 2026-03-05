@@ -1,93 +1,86 @@
 export class AudioEngine {
-  constructor() {
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // 🎛 Master
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.value = 0.7; // evita clipping global
-    this.masterGain.connect(this.ctx.destination);
+constructor(){
 
-    // 🎚 Compresor para estabilizar mezcla
-    this.compressor = this.ctx.createDynamicsCompressor();
-    this.compressor.threshold.value = -24;
-    this.compressor.knee.value = 30;
-    this.compressor.ratio.value = 12;
-    this.compressor.attack.value = 0.003;
-    this.compressor.release.value = 0.25;
+this.ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-    this.compressor.connect(this.masterGain);
+this.master = this.ctx.createGain();
+this.master.gain.value = 0.8;
+this.master.connect(this.ctx.destination);
 
-    this.buffers = {};
-    this.globalState = {
-      density: 0.5,
-      energy: 0.5,
-      modulation: 0.5
-    };
+this.filter = this.ctx.createBiquadFilter();
+this.filter.type = "lowpass";
+this.filter.frequency.value = 8000;
 
-    this.autonomousInterval = null;
-  }
+this.distortion = this.ctx.createWaveShaper();
+this.distortion.curve = this.makeDistortionCurve(0);
+this.distortion.oversample = "4x";
 
-  // 🔓 importante para Chrome/Safari
-  async resumeContext() {
-    if (this.ctx.state === "suspended") {
-      await this.ctx.resume();
-      console.log("🔊 AudioContext resumed");
-    }
-  }
+this.gain = this.ctx.createGain();
+this.gain.gain.value = 0.9;
 
-  async loadSample(name, url) {
-    const response = await fetch(url);
-    const arrayBuffer = await response.arrayBuffer();
-    const audioBuffer = await this.ctx.decodeAudioData(arrayBuffer);
-    this.buffers[name] = audioBuffer;
-  }
+this.filter.connect(this.distortion);
+this.distortion.connect(this.gain);
+this.gain.connect(this.master);
 
-  playSample(name) {
-    if (!this.buffers[name]) return;
+this.source = null;
 
-    const source = this.ctx.createBufferSource();
-    source.buffer = this.buffers[name];
+}
 
-    // 🎚 Ganancia dinámica según energía
-    const gain = this.ctx.createGain();
-    gain.gain.value = 0.1 + Math.random() * this.globalState.energy * 0.5;
+async resume(){
+if(this.ctx.state === "suspended"){
+await this.ctx.resume();
+}
+}
 
-    // 🎛 Filtro controlado por modulation
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.frequency.value =
-      200 + this.globalState.modulation * 6000;
+async load(url){
 
-    // 🎧 Paneo estéreo leve (más espacial)
-    const panner = this.ctx.createStereoPanner();
-    panner.pan.value = (Math.random() - 0.5) * 0.6;
+const res = await fetch(url);
+const arrayBuffer = await res.arrayBuffer();
+this.buffer = await this.ctx.decodeAudioData(arrayBuffer);
 
-    source.connect(filter);
-    filter.connect(gain);
-    gain.connect(panner);
-    panner.connect(this.compressor);
+}
 
-    source.start();
-  }
+playLoop(){
 
-  updateFromNetwork(state) {
-    this.globalState = state;
-  }
+this.source = this.ctx.createBufferSource();
+this.source.buffer = this.buffer;
+this.source.loop = true;
 
-  startAutonomousProcess() {
-    if (this.autonomousInterval) return;
+this.source.connect(this.filter);
 
-    this.autonomousInterval = setInterval(() => {
-      const densityCurve = Math.pow(this.globalState.density, 2);
+this.source.start();
 
-      if (Math.random() < densityCurve) {
-        const keys = Object.keys(this.buffers);
-        if (keys.length > 0) {
-          const randomKey =
-            keys[Math.floor(Math.random() * keys.length)];
-          this.playSample(randomKey);
-        }
-      }
-    }, 150); // más fluido que 200ms
-  }
+}
+
+updateFromInteraction(x,y,speed){
+
+// filtro respiración
+let cutoff = 2000 + x * 6000;
+this.filter.frequency.setTargetAtTime(cutoff,this.ctx.currentTime,0.1);
+
+// distorsión suave
+let amount = speed * 30;
+this.distortion.curve = this.makeDistortionCurve(amount);
+
+}
+
+makeDistortionCurve(amount){
+
+let k = amount;
+let n = 44100;
+let curve = new Float32Array(n);
+let deg = Math.PI/180;
+
+for(let i=0;i<n;i++){
+
+let x = i*2/n-1;
+curve[i]=(3+k)*x*20*deg/(Math.PI+k*Math.abs(x));
+
+}
+
+return curve;
+
+}
+
 }

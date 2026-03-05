@@ -1,46 +1,48 @@
 import { AudioEngine } from "./audioEngine.js";
-import { Network } from "./network.js";
 
-let audioEngine;
-let network;
-let started = false;
+let audio;
+let started=false;
 
-async function init() {
-  if (started) return;
-  started = true;
+let lastX=0;
+let lastY=0;
 
-  audioEngine = new AudioEngine();
-  network = new Network(audioEngine);
+async function init(){
 
-  // 🔊 Cargar samples WAV
-  await audioEngine.loadSample("machine1", "./assets/audio/07_electric_room.wav");
-  await audioEngine.loadSample("machine2", "./assets/audio/08_welding.wav");
+audio = new AudioEngine();
 
-  console.log("✅ Samples loaded");
+await audio.resume();
 
-  // Iniciar proceso autónomo (como en SuperCollider)
-  audioEngine.startAutonomousProcess();
+await audio.load("./assets/audio/machine-listening.wav");
 
-  console.log("🌍 Distributed sonic ecosystem started");
+audio.playLoop();
+
+console.log("galaxy audio started");
+
 }
 
-// 🔓 Desbloqueo obligatorio del audio context
-document.addEventListener("click", async () => {
-  if (!started) {
-    await init();
-  }
+document.addEventListener("pointerdown",async()=>{
+
+if(!started){
+
+started=true;
+await init();
+
+}
+
 });
 
-// 🎛 Influencia del usuario
-document.addEventListener("mousemove", (e) => {
-  if (!network) return;
+document.addEventListener("pointermove",(e)=>{
 
-  const density = e.clientX / window.innerWidth;
-  const energy = 1 - (e.clientY / window.innerHeight);
+if(!audio) return;
 
-  network.sendLocalInfluence({
-    density,
-    energy,
-    modulation: Math.random()
-  });
-});
+let x = e.clientX/window.innerWidth;
+let y = e.clientY/window.innerHeight;
+
+let speed = Math.abs(e.movementX)+Math.abs(e.movementY);
+
+audio.updateFromInteraction(x,y,speed*0.01);
+
+lastX=x;
+lastY=y;
+
+}); 
