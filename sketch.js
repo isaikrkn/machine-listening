@@ -51,7 +51,7 @@ async function startAudio() {
     masterGain.connect(audioCtx.destination);
 
     // cargar WAV
-    const response = await fetch("./audio/galaxy.wav");
+    const response = await fetch("./audio/machine-listening.wav");
     const arrayBuffer = await response.arrayBuffer();
     const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
 
