@@ -1,53 +1,51 @@
-let sounds = []
-let fft
-let stars = []
+let sound;
+let fft;
+let stars = [];
 
 function preload(){
 
-sounds[0] = loadSound("assets/audio/plant1.wav")
-sounds[1] = loadSound("assets/audio/plant2.wav")
-sounds[2] = loadSound("assets/audio/wind.wav")
+sound = loadSound("assets/audio/machine-listening.wav");
 
 }
 
 function setup(){
 
-createCanvas(windowWidth, windowHeight)
+createCanvas(windowWidth, windowHeight);
 
-fft = new p5.FFT()
+fft = new p5.FFT();
 
 for(let i=0;i<400;i++){
 
 stars.push({
 x: random(width),
 y: random(height),
-size: random(1,4)
-})
+size: random(1,3)
+});
 
 }
 
-background(0)
+background(0);
 
 }
 
 function draw(){
 
-background(0,40)
+background(0,40);
 
-let spectrum = fft.analyze()
+let spectrum = fft.analyze();
 
 for(let s of stars){
 
-let energy = spectrum[int(random(spectrum.length))]
+let energy = spectrum[int(random(spectrum.length))];
 
-fill(energy,150,255)
-noStroke()
+fill(energy,150,255);
+noStroke();
 
 circle(
 s.x,
 s.y,
-s.size + energy * 0.05
-)
+s.size + energy*0.05
+);
 
 }
 
@@ -55,13 +53,9 @@ s.size + energy * 0.05
 
 function mousePressed(){
 
-if(!sounds[0].isPlaying()){
+if(!sound.isPlaying()){
 
-for(let s of sounds){
-
-s.loop()
-
-}
+sound.loop();
 
 }
 
@@ -69,6 +63,6 @@ s.loop()
 
 function windowResized(){
 
-resizeCanvas(windowWidth,windowHeight)
+resizeCanvas(windowWidth,windowHeight);
 
 }
