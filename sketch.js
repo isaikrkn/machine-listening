@@ -1,101 +1,54 @@
 let stars = [];
 let center;
-
 const NUM_STARS = 400;
 
-let audioCtx;
-let source;
+function setup() {
+  console.log("p5 setup running");
 
-async function startAudio(){
+  createCanvas(window.innerWidth, window.innerHeight);
+  center = createVector(width / 2, height / 2);
 
-if(audioCtx) return;
+  for (let i = 0; i < NUM_STARS; i++) {
+    stars.push(new Star());
+  }
 
-audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-const response = await fetch("./assets/audio/machine-listening.wav");
-
-const arrayBuffer = await response.arrayBuffer();
-
-const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-source = audioCtx.createBufferSource();
-source.buffer = audioBuffer;
-source.loop = true;
-
-source.connect(audioCtx.destination);
-
-source.start();
-
-console.log("audio loop started");
-
+  background(0);
 }
 
-function setup(){
+function draw() {
+  background(0, 40);
 
-createCanvas(windowWidth, windowHeight);
+  translate(center.x, center.y);
 
-center = createVector(width/2,height/2);
+  // usar estado desde audioEngine si existe
+  let density = window.audioEngine?.globalState?.density ?? 0.5;
+  let energy  = window.audioEngine?.globalState?.energy ?? 0.5;
 
-for(let i=0;i<NUM_STARS;i++){
-
-stars.push(new Star());
-
+  for (let s of stars) {
+    s.update(density, energy);
+    s.draw();
+  }
 }
 
-background(0);
+class Star {
+  constructor() {
+    this.angle = random(TWO_PI);
+    this.radius = random(20, min(width, height) / 2);
+    this.speed = random(0.0005, 0.003);
+    this.size = random(1, 3);
+  }
 
-window.addEventListener("pointerdown",startAudio);
+  update(density, energy) {
+    this.angle += this.speed * density * 5;
+    this.radius += sin(frameCount * 0.001 + this.angle) * energy * 0.3;
+  }
 
-}
+  draw() {
+    let x = cos(this.angle) * this.radius;
+    let y = sin(this.angle) * this.radius;
 
-function draw(){
-
-background(0,40);
-
-translate(center.x,center.y);
-
-for(let s of stars){
-
-s.update();
-
-s.draw();
-
-}
-
-}
-
-class Star{
-
-constructor(){
-
-this.angle=random(TWO_PI);
-
-this.radius=random(20,min(width,height)/2);
-
-this.speed=random(0.0005,0.003);
-
-this.size=random(1,3);
-
-}
-
-update(){
-
-this.angle+=this.speed;
-
-this.radius+=sin(frameCount*0.001+this.angle)*0.3;
-
-}
-
-draw(){
-
-let x=cos(this.angle)*this.radius;
-let y=sin(this.angle)*this.radius;
-
-noStroke();
-fill(255,180);
-
-ellipse(x,y,this.size);
-
-}
-
+    noStroke();
+    fill(255, 180);
+    ellipse(x, y, this.size);
+  }
 }
