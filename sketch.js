@@ -1,101 +1,223 @@
-let stars = [];
-let center;
+import { DataEngine } from "./dataEngine.js"
 
-const NUM_STARS = 400;
+let particles=[]
+let center
 
-let audioCtx;
-let source;
+const NUM_PARTICLES = 3000
+
+let dataEngine
+let plantData
+
+let audioCtx
+let source
+
+
+/* ================================
+   AUDIO LOOP (NO INTERACTION)
+================================ */
 
 async function startAudio(){
 
-if(audioCtx) return;
+if(audioCtx) return
 
-audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+audioCtx = new (window.AudioContext||window.webkitAudioContext)()
 
-const response = await fetch("./assets/audio/machine-listening.wav");
+const response = await fetch("./assets/audio/machine-listening.wav")
 
-const arrayBuffer = await response.arrayBuffer();
+const arrayBuffer = await response.arrayBuffer()
 
-const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer)
 
-source = audioCtx.createBufferSource();
-source.buffer = audioBuffer;
-source.loop = true;
+source = audioCtx.createBufferSource()
+source.buffer = audioBuffer
+source.loop = true
 
-source.connect(audioCtx.destination);
+source.connect(audioCtx.destination)
 
-source.start();
+source.start()
 
-console.log("audio loop started");
+console.log("machine listening audio started")
 
 }
+
+
+/* ================================
+   SETUP
+================================ */
 
 function setup(){
 
-createCanvas(windowWidth, windowHeight);
+createCanvas(windowWidth,windowHeight)
 
-center = createVector(width/2,height/2);
+center=createVector(width/2,height/2)
 
-for(let i=0;i<NUM_STARS;i++){
+dataEngine=new DataEngine()
 
-stars.push(new Star());
+for(let i=0;i<NUM_PARTICLES;i++){
+
+particles.push(new Particle())
+
+}
+
+background(0)
+
+window.addEventListener("pointerdown",startAudio)
 
 }
 
-background(0);
 
-window.addEventListener("pointerdown",startAudio);
-
-}
+/* ================================
+   DRAW
+================================ */
 
 function draw(){
 
-background(0,40);
+background(0,25)
 
-translate(center.x,center.y);
+plantData=dataEngine.update()
 
-for(let s of stars){
+translate(center.x,center.y)
 
-s.update();
+let energy = (plantData.wind + plantData.solar)/2
 
-s.draw();
+let turbulence = plantData.noise
+
+let networkFlow = plantData.network
+
+
+for(let p of particles){
+
+p.update(energy,turbulence,networkFlow)
+p.draw()
 
 }
 
+resetMatrix()
+
+drawScientificOverlay()
+
 }
 
-class Star{
+
+/* ================================
+   PARTICLE CLASS
+================================ */
+
+class Particle{
 
 constructor(){
 
-this.angle=random(TWO_PI);
+this.angle=random(TWO_PI)
 
-this.radius=random(20,min(width,height)/2);
+this.radius=random(20,min(width,height)/2)
 
-this.speed=random(0.0005,0.003);
+this.baseRadius=this.radius
 
-this.size=random(1,3);
+this.speed=random(0.0003,0.002)
+
+this.size=random(0.5,2)
 
 }
 
-update(){
+update(energy,turbulence,network){
 
-this.angle+=this.speed;
+this.angle += this.speed * (1 + energy*6)
 
-this.radius+=sin(frameCount*0.001+this.angle)*0.3;
+this.radius = this.baseRadius +
+sin(frameCount*0.002 + this.angle)*energy*2
+
+this.radius += random(-turbulence*2,turbulence*2)
+
+this.angle += network*0.002
 
 }
 
 draw(){
 
-let x=cos(this.angle)*this.radius;
-let y=sin(this.angle)*this.radius;
+let x=cos(this.angle)*this.radius
+let y=sin(this.angle)*this.radius
 
-noStroke();
-fill(255,180);
+let d = dist(0,0,x,y)
 
-ellipse(x,y,this.size);
+let alpha = map(d,0,width/2,255,60)
+
+noStroke()
+
+fill(255,alpha)
+
+ellipse(x,y,this.size)
 
 }
+
+}
+
+
+/* ================================
+   DATA OVERLAY (SCIENTIFIC UI)
+================================ */
+
+function drawScientificOverlay(){
+
+fill(255)
+
+textSize(13)
+
+text("MACHINE LISTENING NETWORK",30,30)
+
+text("WIND FIELD: "+nf(plantData.wind,1,2),30,60)
+text("SOLAR ENERGY: "+nf(plantData.solar,1,2),30,80)
+text("INDUSTRIAL NOISE: "+nf(plantData.noise,1,2),30,100)
+text("NETWORK FLOW: "+nf(plantData.network,1,2),30,120)
+
+
+drawMiniField(width*0.15,height*0.2,plantData.wind)
+drawMiniField(width*0.85,height*0.2,plantData.solar)
+drawMiniField(width*0.15,height*0.8,plantData.noise)
+drawMiniField(width*0.85,height*0.8,plantData.network)
+
+}
+
+
+/* ================================
+   MINI DATA GALAXY
+================================ */
+
+function drawMiniField(x,y,value){
+
+push()
+
+translate(x,y)
+
+let particles=60
+
+for(let i=0;i<particles;i++){
+
+let angle=TWO_PI*i/particles + frameCount*0.02
+
+let r = 50*value
+
+let px = cos(angle)*r
+let py = sin(angle)*r
+
+fill(255,120)
+
+ellipse(px,py,2)
+
+}
+
+pop()
+
+}
+
+
+/* ================================
+   RESIZE
+================================ */
+
+function windowResized(){
+
+resizeCanvas(windowWidth,windowHeight)
+
+center=createVector(width/2,height/2)
 
 }
