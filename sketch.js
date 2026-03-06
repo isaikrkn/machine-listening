@@ -1,10 +1,32 @@
-let sound;
-let fft;
 let stars = [];
+let center;
 
-function preload(){
+const NUM_STARS = 400;
 
-sound = loadSound("assets/audio/machine-listening.wav");
+let audioCtx;
+let source;
+
+async function startAudio(){
+
+if(audioCtx) return;
+
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+const response = await fetch("./assets/audio/machine-listening.wav");
+
+const arrayBuffer = await response.arrayBuffer();
+
+const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+
+source = audioCtx.createBufferSource();
+source.buffer = audioBuffer;
+source.loop = true;
+
+source.connect(audioCtx.destination);
+
+source.start();
+
+console.log("audio loop started");
 
 }
 
@@ -12,19 +34,17 @@ function setup(){
 
 createCanvas(windowWidth, windowHeight);
 
-fft = new p5.FFT();
+center = createVector(width/2,height/2);
 
-for(let i=0;i<400;i++){
+for(let i=0;i<NUM_STARS;i++){
 
-stars.push({
-x: random(width),
-y: random(height),
-size: random(1,3)
-});
+stars.push(new Star());
 
 }
 
 background(0);
+
+window.addEventListener("pointerdown",startAudio);
 
 }
 
@@ -32,37 +52,50 @@ function draw(){
 
 background(0,40);
 
-let spectrum = fft.analyze();
+translate(center.x,center.y);
 
 for(let s of stars){
 
-let energy = spectrum[int(random(spectrum.length))];
+s.update();
 
-fill(energy,150,255);
+s.draw();
+
+}
+
+}
+
+class Star{
+
+constructor(){
+
+this.angle=random(TWO_PI);
+
+this.radius=random(20,min(width,height)/2);
+
+this.speed=random(0.0005,0.003);
+
+this.size=random(1,3);
+
+}
+
+update(){
+
+this.angle+=this.speed;
+
+this.radius+=sin(frameCount*0.001+this.angle)*0.3;
+
+}
+
+draw(){
+
+let x=cos(this.angle)*this.radius;
+let y=sin(this.angle)*this.radius;
+
 noStroke();
+fill(255,180);
 
-circle(
-s.x,
-s.y,
-s.size + energy*0.05
-);
+ellipse(x,y,this.size);
 
 }
-
-}
-
-function mousePressed(){
-
-if(!sound.isPlaying()){
-
-sound.loop();
-
-}
-
-}
-
-function windowResized(){
-
-resizeCanvas(windowWidth,windowHeight);
 
 }
