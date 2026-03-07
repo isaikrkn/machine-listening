@@ -1,26 +1,56 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Machine Listening</title>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
-
-<style>
-body{
-margin:0;
-overflow:hidden;
-background:black;
-}
-</style>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Machines Listening to Themselves</title>
+  <meta name="description" content="Distributed audiovisual prototype for Prix Ars Electronica" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 </head>
-
 <body>
+  <div id="overlay" class="overlay">
+    <div class="overlay-panel">
+      <div class="eyebrow">Interactive Art +</div>
+      <h1>Machines Listening to Themselves</h1>
+      <p>
+        A distributed audiovisual ecosystem shaped by industrial memory,
+        environmental pressure, and machine self-listening.
+      </p>
+      <button id="startButton">Activate system</button>
+      <div class="hint">Use mouse or touch to perturb the system.</div>
+    </div>
+  </div>
 
+<<<<<<< Updated upstream
 <script src="./sketch.js"></script>
+=======
+  <div class="hud">
+    <div class="hud-block left">
+      <div class="label">System</div>
+      <div id="networkStatus">network: booting…</div>
+      <div id="audioStatus">audio: locked</div>
+    </div>
+>>>>>>> Stashed changes
 
+    <div class="hud-block center">
+      <div class="title">Machine Listening</div>
+      <div class="subtitle">non-human audiovisual inference layer</div>
+    </div>
+
+    <div class="hud-block right">
+      <div id="metricEnergy">energy 0.00</div>
+      <div id="metricAnomaly">anomaly 0.00</div>
+      <div id="metricClimate">climate 0.00</div>
+    </div>
+  </div>
+
+  <script src="./network.js"></script>
+  <script src="./main.js"></script>
+  <script src="./sketch.js"></script>
 </body>
-
 </html>
