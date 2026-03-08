@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Machines Listening to Themselves</title>
+  <link rel="icon" href="assets/favicon.png" />
   <style>
     :root {
       --bg: #060814;
@@ -41,7 +42,9 @@
       content: "";
       position: fixed;
       inset: 0;
-      background-image: linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-image:
+        linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
       background-size: 72px 72px;
       mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
       pointer-events: none;
@@ -100,15 +103,29 @@
     .nav-links a:hover { color: var(--text); }
 
     .hero {
-      padding: 84px 0 56px;
+      padding: 56px 0 56px;
       position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(154, 210, 255, 0.16), transparent 22%),
+        radial-gradient(circle at 80% 18%, rgba(199, 156, 255, 0.12), transparent 24%),
+        radial-gradient(circle at 50% 72%, rgba(255, 192, 144, 0.08), transparent 28%);
+      pointer-events: none;
+      opacity: 0.95;
     }
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
+      grid-template-columns: 0.95fr 1.05fr;
       gap: 28px;
       align-items: stretch;
+      min-height: 78vh;
     }
 
     .eyebrow {
@@ -126,18 +143,26 @@
 
     h1 {
       margin: 0;
-      font-size: clamp(2.8rem, 7vw, 5.6rem);
-      line-height: 0.94;
-      letter-spacing: -0.045em;
-      max-width: 10ch;
+      font-size: clamp(2.9rem, 6.2vw, 5.9rem);
+      line-height: 0.9;
+      letter-spacing: -0.055em;
+      max-width: 9ch;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
     }
 
     .hero-copy p {
-      font-size: 1.1rem;
-      line-height: 1.72;
+      font-size: 1.08rem;
+      line-height: 1.76;
       color: var(--muted);
-      max-width: 62ch;
-      margin: 18px 0 0;
+      max-width: 60ch;
+      margin: 20px 0 0;
     }
 
     .cta-row {
@@ -183,31 +208,77 @@
     .hero-panel {
       position: relative;
       overflow: hidden;
-      min-height: 460px;
+      min-height: 560px;
       display: flex;
       align-items: flex-end;
       padding: 26px;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 52%, rgba(255,255,255,0.88) 0 1.1%, rgba(255,255,255,0.08) 1.3% 4.5%, transparent 7%),
+        radial-gradient(circle at 50% 52%, rgba(186, 149, 255, 0.34), transparent 18%),
+        radial-gradient(circle at 38% 44%, rgba(105, 143, 255, 0.16), transparent 20%),
+        radial-gradient(circle at 66% 58%, rgba(255, 180, 148, 0.12), transparent 24%),
+        linear-gradient(180deg, rgba(8, 12, 25, 0.92), rgba(6, 9, 18, 0.94));
     }
 
     .hero-panel::before {
       content: "";
       position: absolute;
-      inset: 0;
+      inset: -8%;
       background:
-        radial-gradient(circle at 52% 48%, rgba(255,255,255,0.92) 0 1.4%, rgba(255,255,255,0.1) 1.5% 5%, transparent 8%),
-        radial-gradient(circle at 52% 48%, rgba(200, 150, 255, 0.42), transparent 20%),
-        radial-gradient(circle at 40% 38%, rgba(123, 166, 255, 0.18), transparent 20%),
-        radial-gradient(circle at 68% 62%, rgba(255, 189, 149, 0.16), transparent 22%),
-        linear-gradient(180deg, rgba(7,11,22,0.65), rgba(6,8,18,0.15));
+        radial-gradient(circle at 50% 52%, rgba(255,255,255,0.95) 0 0.45%, transparent 0.6%),
+        repeating-radial-gradient(circle at 50% 52%, rgba(255,255,255,0.045) 0 2px, transparent 2px 38px),
+        repeating-conic-gradient(from 0deg at 50% 52%, rgba(154, 210, 255, 0.08) 0 4deg, transparent 4deg 14deg, rgba(199, 156, 255, 0.05) 14deg 18deg, transparent 18deg 30deg);
+      mix-blend-mode: screen;
+      opacity: 0.82;
+      animation: spin 36s linear infinite;
     }
 
     .hero-panel::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: repeating-linear-gradient(180deg, rgba(255,255,255,0.018) 0 2px, transparent 2px 6px);
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 48%, transparent 52%, transparent 100%),
+        repeating-linear-gradient(180deg, rgba(255,255,255,0.028) 0 1px, transparent 1px 5px);
+      opacity: 0.28;
       mix-blend-mode: screen;
-      opacity: 0.34;
+      pointer-events: none;
+    }
+
+    .hero-panel .x-line,
+    .hero-panel .x-line-2,
+    .hero-panel .x-line-3,
+    .hero-panel .x-line-4 {
+      position: absolute;
+      left: 50%;
+      top: 52%;
+      width: 96%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      transform-origin: center;
+      opacity: 0.7;
+      filter: blur(0.2px);
+      z-index: 0;
+    }
+
+    .hero-panel .x-line { transform: translate(-50%, -50%) rotate(18deg); }
+    .hero-panel .x-line-2 { transform: translate(-50%, -50%) rotate(-18deg); }
+    .hero-panel .x-line-3 { transform: translate(-50%, -50%) rotate(64deg); opacity: 0.42; }
+    .hero-panel .x-line-4 { transform: translate(-50%, -50%) rotate(-64deg); opacity: 0.42; }
+
+    .hero-panel .data-cloud {
+      position: absolute;
+      inset: 8% 8% 18% 8%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0 1px, transparent 1.6px),
+        radial-gradient(circle at 44% 46%, rgba(154,210,255,0.28), transparent 12%),
+        radial-gradient(circle at 57% 55%, rgba(199,156,255,0.22), transparent 13%),
+        radial-gradient(circle at 63% 42%, rgba(255,186,120,0.18), transparent 10%);
+      filter: blur(0.3px);
+      opacity: 0.86;
+      z-index: 0;
+      mask-image: radial-gradient(circle at center, black 0 44%, transparent 82%);
     }
 
     .orbital {
@@ -261,6 +332,13 @@
       font-size: clamp(1.7rem, 4vw, 2.8rem);
       line-height: 1.05;
       letter-spacing: -0.03em;
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.08rem;
+      letter-spacing: -0.02em;
     }
 
     .kicker {
@@ -324,7 +402,8 @@
     .panel p,
     .panel li,
     .credit-card p,
-    .credit-card li {
+    .credit-card li,
+    .gallery-caption p {
       color: var(--muted);
       line-height: 1.72;
       font-size: 1rem;
@@ -403,6 +482,7 @@
       font-size: 1rem;
       font-weight: 700;
       margin: 0 0 8px;
+      color: var(--text);
     }
 
     .footer {
@@ -429,16 +509,55 @@
         grid-template-columns: 1fr;
       }
 
-      .hero-panel { min-height: 360px; }
-      .gallery-card.large img { min-height: 360px; }
+      .hero-grid {
+        min-height: auto;
+      }
+
+      .hero-panel {
+        min-height: 420px;
+      }
+
+      .gallery-card.large img {
+        min-height: 360px;
+      }
     }
 
     @media (max-width: 640px) {
-      .hero { padding-top: 52px; }
-      .nav-inner { align-items: flex-start; }
-      .nav-links { gap: 12px; font-size: 0.9rem; }
-      .panel, .credit-card, .gallery-caption { padding: 16px; }
-      .sim-frame { height: 60vh; }
+      .hero {
+        padding-top: 52px;
+      }
+
+      .nav-inner {
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        gap: 12px;
+        font-size: 0.9rem;
+      }
+
+      .panel,
+      .credit-card,
+      .gallery-caption {
+        padding: 16px;
+      }
+
+      .sim-frame {
+        height: 60vh;
+      }
+
+      h1 {
+        max-width: 100%;
+      }
+
+      .hero-panel {
+        min-height: 320px;
+      }
+
+      .meta-row {
+        flex-direction: column;
+        gap: 4px;
+      }
     }
   </style>
 </head>
@@ -466,10 +585,7 @@
           <div class="eyebrow">Interactive Art + · Prix Ars Electronica Submission · 2026</div>
           <h1>Machines Listening to Themselves</h1>
           <p>
-            A distributed audiovisual installation where industrial signals, 
-            machine rhythms, and environmental data become a self-organizing sonic and visual ecosystem. 
-            The work reframes machinery as a sensing agent that perceives, interprets, and expresses its 
-            own operational states.
+            A large-scale audiovisual field where industrial signals become luminous structures, sonic matter, and machine memory. Inspired by data atmospheres, granular abstraction, and architectural composition, the work stages the factory as an organism that senses itself through vibration, rhythm, and energy.
           </p>
           <div class="cta-row">
             <a class="button primary" href="#simulation">Enter the live simulation</a>
@@ -478,7 +594,13 @@
         </div>
 
         <div class="hero-panel" aria-hidden="true">
+          <div class="x-line"></div>
+          <div class="x-line-2"></div>
+          <div class="x-line-3"></div>
+          <div class="x-line-4"></div>
+          <div class="data-cloud"></div>
           <div class="orbital"></div>
+
           <div class="hero-meta">
             <div class="meta-row"><span>Distributed audiovisual installation</span><span>Sound · Data · Machine perception</span></div>
             <div class="meta-row"><span>Field recordings from industrial environments</span><span>Web-based generative system</span></div>
@@ -492,21 +614,19 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Project</h2>
-          <div class="kicker"></div>
+          <div class="kicker">A concise overview of the work, its conceptual frame, and the audiovisual documentation prepared for online review.</div>
         </div>
 
         <div class="video-grid">
           <div class="panel">
-        <iframe 
-            width="100%" 
-            height="600"
-            src="https://www.youtube.com/embed/vSeS6ami2Hk?si=DGgC2u8_GNZGJFc8" 
-            title="Machines Listening to Themselves" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerpolicy="strict-origin-when-cross-origin" 
-            allowfullscreen>
-    </iframe>
+            <iframe
+              class="video-frame"
+              src="https://www.youtube.com/embed/vSeS6ami2Hk?si=DGgC2u8_GNZGJFc8"
+              title="Machines Listening to Themselves"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen>
+            </iframe>
           </div>
 
           <div class="panel">
@@ -542,18 +662,14 @@
           <div class="panel">
             <h3>Material</h3>
             <p>
-              The project is based on field recordings and operational data captured within a 
-              truck manufacturing environment. Vibrations, airflow, torque, electrical activity, 
-              and assembly rhythms are collected through microphones and contact-based industrial sensors.
+              The project is based on field recordings and operational data captured within a truck manufacturing environment. Vibrations, airflow, torque, electrical activity, and assembly rhythms are collected through microphones and contact-based industrial sensors.
             </p>
           </div>
 
           <div class="panel">
             <h3>Method</h3>
             <p>
-              These signals are analyzed through custom software and AI-assisted pattern recognition, 
-              then translated into evolving sound synthesis and generative visual structures. 
-              The system reacts both to machine behavior and to remote environmental data streams.
+              These signals are analyzed through custom software and AI-assisted pattern recognition, then translated into evolving sound synthesis and generative visual structures. The system reacts both to machine behavior and to remote environmental data streams.
             </p>
           </div>
         </div>
@@ -564,7 +680,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Live Simulation</h2>
-          <div class="kicker"></div>
+          <div class="kicker">The browser-based version of the work. Activate sound and experience the system as an evolving field of industrial listening.</div>
         </div>
 
         <div class="sim-shell">
@@ -572,8 +688,11 @@
             <div class="status-pill">Interactive audiovisual system ready</div>
             <div>Recommended: headphones or multi-channel speakers · full screen · desktop browser</div>
           </div>
-          <iframe class="sim-frame" src="./simulation/index.html" 
-          title="Machines Listening to Themselves simulation"></iframe>
+          <iframe
+            class="sim-frame"
+            src="./simulation/index.html"
+            title="Machines Listening to Themselves simulation">
+          </iframe>
         </div>
       </div>
     </section>
@@ -582,29 +701,26 @@
       <div class="wrap">
         <div class="section-head">
           <h2>System</h2>
-          <div class="kicker"></div>
+          <div class="kicker">From capture to translation: the installation connects sensing, analysis, sound synthesis, and generative image behavior.</div>
         </div>
 
         <div class="info-grid">
           <div class="panel">
             <h3>1. Capture</h3>
             <p>
-              Field recordings and industrial sensing interfaces gather acoustic, 
-              vibrational, and rhythmic signatures from machinery and assembly processes.
+              Field recordings and industrial sensing interfaces gather acoustic, vibrational, and rhythmic signatures from machinery and assembly processes.
             </p>
           </div>
           <div class="panel">
             <h3>2. Analysis</h3>
             <p>
-              Custom JavaScript systems, Python-based data analysis, and AI-assisted anomaly 
-              detection identify latent structures, stress cycles, and temporal patterns.
+              Custom JavaScript systems, Python-based data analysis, and AI-assisted anomaly detection identify latent structures, stress cycles, and temporal patterns.
             </p>
           </div>
           <div class="panel">
             <h3>3. Translation</h3>
             <p>
-              Sound synthesis, generative motion, and data-driven image behavior reorganize the 
-              industrial signal into an emergent audiovisual organism.
+              Sound synthesis, generative motion, and data-driven image behavior reorganize the industrial signal into an emergent audiovisual organism.
             </p>
           </div>
         </div>
@@ -612,18 +728,12 @@
         <div class="panel" style="margin-top:18px;">
           <h3>Installation Format</h3>
           <p>
-            Large-scale projection environment, multi-channel sound system, 
-            real-time generative visual engine, industrial field recordings, 
-            sensor-derived data, and a web-based architecture capable of distributed response.
+            Large-scale projection environment, multi-channel sound system, real-time generative visual engine, industrial field recordings, sensor-derived data, and a web-based architecture capable of distributed response.
           </p>
           <ul>
-            <li>Software: SuperCollider (research phase), Web Audio API, Node.js, WebSocket architecture, 
-                Python data analysis, custom JavaScript tools</li>
-            <li>Hardware: field recording microphones, contact microphones, vibration sensors, 
-                portable recorders, industrial sensing interfaces, computers for real-time processing, 
-                multi-channel audio, projection system</li>
-            <li>AI role: analytical and interpretative layer for pattern recognition, anomaly detection, 
-                and signal mapping</li>
+            <li>Software: SuperCollider (research phase), Web Audio API, Node.js, WebSocket architecture, Python data analysis, custom JavaScript tools</li>
+            <li>Hardware: field recording microphones, contact microphones, vibration sensors, portable recorders, industrial sensing interfaces, computers for real-time processing, multi-channel audio, projection system</li>
+            <li>AI role: analytical and interpretative layer for pattern recognition, anomaly detection, and signal mapping</li>
           </ul>
         </div>
       </div>
@@ -633,7 +743,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Gallery</h2>
-          <div class="kicker"></div>
+          <div class="kicker">Installation render, industrial source material, and environmental sensing imagery connected to the project’s data ecology.</div>
         </div>
 
         <div class="gallery-grid">
@@ -654,10 +764,10 @@
           </article>
 
           <article class="gallery-card">
-            <img src="simulation/assets/images/img-haeolic-energy.png" alt="Truck from the industrial environment" />
+            <img src="simulation/assets/images/img-haeolic-energy.png" alt="Wind energy monitoring and sensing system" />
             <div class="gallery-caption">
-              <p class="caption-title">Operational object</p>
-              <p>The industrial object as acoustic source, data body, and aesthetic agent.</p>
+              <p class="caption-title">Environmental energy input</p>
+              <p>Wind energy, sensing devices, and remote status capture as part of the project’s broader energetic ecology.</p>
             </div>
           </article>
         </div>
