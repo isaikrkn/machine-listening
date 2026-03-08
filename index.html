@@ -1,130 +1,687 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Machines Listening to Themselves</title>
+  <style>
+    :root {
+      --bg: #060814;
+      --bg-soft: #0c1020;
+      --panel: rgba(14, 20, 38, 0.72);
+      --panel-strong: rgba(12, 16, 32, 0.9);
+      --line: rgba(141, 169, 255, 0.18);
+      --text: #eef3ff;
+      --muted: #aab7d6;
+      --accent: #9ad2ff;
+      --accent-2: #c79cff;
+      --glow: 0 0 40px rgba(151, 193, 255, 0.18);
+      --max: 1260px;
+      --radius: 24px;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    * { box-sizing: border-box; }
 
-<title>Machines Listening to Themselves</title>
+    html { scroll-behavior: smooth; }
 
-<link rel="stylesheet" href="style.css">
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(130, 173, 255, 0.16), transparent 30%),
+        radial-gradient(circle at 80% 15%, rgba(199, 156, 255, 0.12), transparent 26%),
+        radial-gradient(circle at 50% 70%, rgba(98, 133, 255, 0.12), transparent 36%),
+        linear-gradient(180deg, #05070f 0%, #070a14 35%, #04060d 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at center, black 30%, transparent 85%);
+      pointer-events: none;
+      opacity: 0.34;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .wrap {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(5, 8, 16, 0.58);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 0 18px rgba(154, 210, 255, 0.7);
+      flex: 0 0 auto;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .hero {
+      padding: 84px 0 56px;
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.8rem, 7vw, 5.6rem);
+      line-height: 0.94;
+      letter-spacing: -0.045em;
+      max-width: 10ch;
+    }
+
+    .hero-copy p {
+      font-size: 1.1rem;
+      line-height: 1.72;
+      color: var(--muted);
+      max-width: 62ch;
+      margin: 18px 0 0;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+
+    .button {
+      padding: 14px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      transition: 180ms ease;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, rgba(140, 200, 255, 0.16), rgba(199, 156, 255, 0.14));
+      box-shadow: var(--glow);
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.22);
+    }
+
+    .hero-panel,
+    .panel,
+    .sim-shell,
+    .gallery-card,
+    .credit-card {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--glow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-panel {
+      position: relative;
+      overflow: hidden;
+      min-height: 460px;
+      display: flex;
+      align-items: flex-end;
+      padding: 26px;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 52% 48%, rgba(255,255,255,0.92) 0 1.4%, rgba(255,255,255,0.1) 1.5% 5%, transparent 8%),
+        radial-gradient(circle at 52% 48%, rgba(200, 150, 255, 0.42), transparent 20%),
+        radial-gradient(circle at 40% 38%, rgba(123, 166, 255, 0.18), transparent 20%),
+        radial-gradient(circle at 68% 62%, rgba(255, 189, 149, 0.16), transparent 22%),
+        linear-gradient(180deg, rgba(7,11,22,0.65), rgba(6,8,18,0.15));
+    }
+
+    .hero-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(180deg, rgba(255,255,255,0.018) 0 2px, transparent 2px 6px);
+      mix-blend-mode: screen;
+      opacity: 0.34;
+    }
+
+    .orbital {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        conic-gradient(from 90deg at 50% 50%, rgba(154, 210, 255, 0.06), rgba(199, 156, 255, 0.18), rgba(255, 204, 143, 0.14), rgba(154, 210, 255, 0.06));
+      mask-image: radial-gradient(circle at center, transparent 0 18%, black 25% 55%, transparent 62%);
+      opacity: 0.9;
+      animation: spin 18s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .hero-meta {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 12px;
+    }
+
+    section {
+      padding: 34px 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 4vw, 2.8rem);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .kicker {
+      color: var(--muted);
+      font-size: 0.96rem;
+      max-width: 48ch;
+      line-height: 1.6;
+    }
+
+    .video-grid,
+    .info-grid,
+    .credits-grid,
+    .gallery-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .video-grid { grid-template-columns: 1.45fr 0.9fr; }
+    .info-grid { grid-template-columns: repeat(3, 1fr); }
+    .credits-grid { grid-template-columns: 1.15fr 0.85fr; }
+    .gallery-grid { grid-template-columns: 1.25fr 1fr 1fr; }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .video-frame {
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      border: 0;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #0b1020, #090d18);
+    }
+
+    .stat-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stat {
+      padding: 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.028);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .stat small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.74rem;
+    }
+
+    .stat strong {
+      font-size: 1.02rem;
+      line-height: 1.45;
+    }
+
+    .panel p,
+    .panel li,
+    .credit-card p,
+    .credit-card li {
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 1rem;
+    }
+
+    .panel ul,
+    .credit-card ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+    }
+
+    .sim-shell {
+      padding: 14px;
+    }
+
+    .sim-topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      padding: 10px 10px 14px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #9ad2ff, #c79cff);
+      box-shadow: 0 0 12px rgba(154,210,255,0.7);
+    }
+
+    .sim-frame {
+      width: 100%;
+      height: min(74vh, 860px);
+      border: 0;
+      border-radius: 20px;
+      background: #03050c;
+    }
+
+    .gallery-card,
+    .credit-card {
+      overflow: hidden;
+    }
+
+    .gallery-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      min-height: 260px;
+    }
+
+    .gallery-card.large img { min-height: 540px; }
+
+    .gallery-caption,
+    .credit-card {
+      padding: 18px;
+    }
+
+    .caption-title,
+    .credit-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+
+    .footer {
+      padding: 40px 0 70px;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .footer-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    @media (max-width: 1040px) {
+      .hero-grid,
+      .video-grid,
+      .credits-grid,
+      .gallery-grid,
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel { min-height: 360px; }
+      .gallery-card.large img { min-height: 360px; }
+    }
+
+    @media (max-width: 640px) {
+      .hero { padding-top: 52px; }
+      .nav-inner { align-items: flex-start; }
+      .nav-links { gap: 12px; font-size: 0.9rem; }
+      .panel, .credit-card, .gallery-caption { padding: 16px; }
+      .sim-frame { height: 60vh; }
+    }
+  </style>
 </head>
-
 <body>
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a href="#top" class="brand">
+        <span class="brand-dot"></span>
+        <span>Machines Listening to Themselves</span>
+      </a>
+      <div class="nav-links">
+        <a href="#project">Project</a>
+        <a href="#simulation">Simulation</a>
+        <a href="#system">System</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#credits">Credits</a>
+      </div>
+    </div>
+  </nav>
 
-<header>
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Interactive Art + · Prix Ars Electronica Submission · 2026</div>
+          <h1>Machines Listening to Themselves</h1>
+          <p>
+            A distributed audiovisual installation where industrial signals, machine rhythms, and environmental data become a self-organizing sonic and visual ecosystem. The work reframes machinery as a sensing agent that perceives, interprets, and expresses its own operational states.
+          </p>
+          <div class="cta-row">
+            <a class="button primary" href="#simulation">Enter the live simulation</a>
+            <a class="button" href="#project">Read the concept</a>
+          </div>
+        </div>
 
-<h1>Machines Listening to Themselves</h1>
+        <div class="hero-panel" aria-hidden="true">
+          <div class="orbital"></div>
+          <div class="hero-meta">
+            <div class="meta-row"><span>Distributed audiovisual installation</span><span>Sound · Data · Machine perception</span></div>
+            <div class="meta-row"><span>Field recordings from industrial environments</span><span>Web-based generative system</span></div>
+            <div class="meta-row"><span>AI-assisted analysis</span><span>Non-human listening</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<p>
-Distributed audiovisual installation exploring machine listening,
-industrial data, and non-human perception.
-</p>
+    <section id="project">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Project</h2>
+          <div class="kicker">A curatorial overview designed for jurors, curators, and institutions reviewing the project online.</div>
+        </div>
 
-<a href="#simulation" class="enter">
-Enter the system
-</a>
+        <div class="video-grid">
+          <div class="panel">
+            <iframe class="video-frame" src="https://www.youtube.com/embed/VIDEO_ID" title="Machines Listening to Themselves project video" allowfullscreen></iframe>
+          </div>
 
-</header>
+          <div class="panel">
+            <div class="stat-list">
+              <div class="stat">
+                <small>Category</small>
+                <strong>Interactive Art +</strong>
+              </div>
+              <div class="stat">
+                <small>Type</small>
+                <strong>Installation</strong>
+              </div>
+              <div class="stat">
+                <small>Year</small>
+                <strong>2026</strong>
+              </div>
+              <div class="stat">
+                <small>Artist</small>
+                <strong>Nehemias Isai Alvarado Juarez</strong>
+              </div>
+            </div>
+          </div>
+        </div>
 
+        <div class="info-grid" style="margin-top:18px;">
+          <div class="panel">
+            <h3>Concept</h3>
+            <p>
+              Machines Listening to Themselves is a distributed audiovisual installation that transforms industrial assembly processes into a self-organizing sonic ecosystem. Instead of treating machines as passive tools of human production, the work frames them as sensing agents capable of perceiving and expressing their own operational states.
+            </p>
+          </div>
 
-<section id="video">
+          <div class="panel">
+            <h3>Material</h3>
+            <p>
+              The project is based on field recordings and operational data captured within a truck manufacturing environment. Vibrations, airflow, torque, electrical activity, and assembly rhythms are collected through microphones and contact-based industrial sensors.
+            </p>
+          </div>
 
-<h2>Project Video</h2>
+          <div class="panel">
+            <h3>Method</h3>
+            <p>
+              These signals are analyzed through custom software and AI-assisted pattern recognition, then translated into evolving sound synthesis and generative visual structures. The system reacts both to machine behavior and to remote environmental data streams.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<video controls width="100%">
-<source src="assets/video/machines-listening.mp4" type="video/mp4">
-</video>
+    <section id="simulation">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Live Simulation</h2>
+          <div class="kicker">Embed the browser-based work here so the jury can immediately see and hear the audiovisual system without leaving the page.</div>
+        </div>
 
-</section>
+        <div class="sim-shell">
+          <div class="sim-topbar">
+            <div class="status-pill">Interactive audiovisual system ready</div>
+            <div>Recommended: headphones or multi-channel speakers · full screen · desktop browser</div>
+          </div>
+          <iframe class="sim-frame" src="./simulation/index.html" title="Machines Listening to Themselves simulation"></iframe>
+        </div>
+      </div>
+    </section>
 
+    <section id="system">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>System</h2>
+          <div class="kicker">Keep this section concise and legible: jurors usually scan this before deciding whether to continue with the rest of the documentation.</div>
+        </div>
 
-<section id="concept">
+        <div class="info-grid">
+          <div class="panel">
+            <h3>1. Capture</h3>
+            <p>
+              Field recordings and industrial sensing interfaces gather acoustic, vibrational, and rhythmic signatures from machinery and assembly processes.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>2. Analysis</h3>
+            <p>
+              Custom JavaScript systems, Python-based data analysis, and AI-assisted anomaly detection identify latent structures, stress cycles, and temporal patterns.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>3. Translation</h3>
+            <p>
+              Sound synthesis, generative motion, and data-driven image behavior reorganize the industrial signal into an emergent audiovisual organism.
+            </p>
+          </div>
+        </div>
 
-<h2>Concept</h2>
+        <div class="panel" style="margin-top:18px;">
+          <h3>Installation Format</h3>
+          <p>
+            Large-scale projection environment, multi-channel sound system, real-time generative visual engine, industrial field recordings, sensor-derived data, and a web-based architecture capable of distributed response.
+          </p>
+          <ul>
+            <li>Software: SuperCollider (research phase), Web Audio API, Node.js, WebSocket architecture, Python data analysis, custom JavaScript tools</li>
+            <li>Hardware: field recording microphones, contact microphones, vibration sensors, portable recorders, industrial sensing interfaces, computers for real-time processing, multi-channel audio, projection system</li>
+            <li>AI role: analytical and interpretative layer for pattern recognition, anomaly detection, and signal mapping</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
-<p>
+    <section id="gallery">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Gallery</h2>
+          <div class="kicker">Use this space for plant photographs, installation renders, screenshots of the simulation, and stills from the video.</div>
+        </div>
 
-Machines Listening to Themselves is a distributed audiovisual installation
-that transforms industrial assembly processes into a self-organizing sonic
-ecosystem.
+        <div class="gallery-grid">
+          <article class="gallery-card large">
+            <img src="images/install-render-01.jpg" alt="Exhibition render of Machines Listening to Themselves" />
+            <div class="gallery-caption">
+              <p class="caption-title">Exhibition render</p>
+              <p>A speculative installation view for curatorial presentation and spatial imagination.</p>
+            </div>
+          </article>
 
-Mechanical actions such as vibration, airflow, electrical activity and
-structural resonance are captured through microphones and industrial
-contact sensors inside a manufacturing environment.
+          <article class="gallery-card">
+            <img src="images/factory-01.jpg" alt="Industrial environment and machine structure" />
+            <div class="gallery-caption">
+              <p class="caption-title">Industrial source material</p>
+              <p>Mechanical systems and architectural conditions from the manufacturing context.</p>
+            </div>
+          </article>
 
-Custom software and AI-assisted analysis translate these signals into
-generative sound synthesis and evolving visual structures.
+          <article class="gallery-card">
+            <img src="images/truck-01.jpg" alt="Truck from the industrial environment" />
+            <div class="gallery-caption">
+              <p class="caption-title">Operational object</p>
+              <p>The industrial object as acoustic source, data body, and aesthetic agent.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-The system forms a distributed network where machines listen to their
-own processes while responding to environmental and operational data
-streams.
+    <section id="credits">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Credits & Artist</h2>
+          <div class="kicker">This section mirrors the submission form while remaining suitable for a public-facing project page.</div>
+        </div>
 
-</p>
+        <div class="credits-grid">
+          <div class="credit-card">
+            <p class="credit-title">Credits</p>
+            <p>
+              Concept, sound design, data sonification, distributed system architecture, software development:<br />
+              <strong>Nehemias Isai Alvarado Juarez</strong>
+            </p>
+            <p>
+              Developed independently. Field material recorded within sustainability-oriented industrial environments.
+            </p>
+            <p class="credit-title" style="margin-top:22px;">Keywords</p>
+            <p>sound art, industrial sonification, distributed systems, machine agency, post-anthropocentric interaction, sustainability, networked installation, AI-assisted analysis, non-human communication</p>
+          </div>
 
-</section>
+          <div class="credit-card">
+            <p class="credit-title">Artist Biography</p>
+            <p>
+              Nehemias Isai Alvarado Juarez is a composer, sound artist, and creative technologist working at the intersection of experimental music, data-driven systems, and industrial environments. His practice explores listening as a critical and political act, focusing on how sound can reveal hidden structures within technological, social, and ecological systems.
+            </p>
+            <p>
+              Currently based in Ireland, he combines artistic practice with experience in engineering and sustainability-oriented manufacturing contexts, approaching technology both as artistic medium and lived operational reality.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-
-<section id="simulation">
-
-<h2>Interactive System</h2>
-
-<p>
-Click the canvas to activate sound.
-Use headphones for best experience.
-</p>
-
-<iframe
-src="simulation/index.html"
-width="100%"
-height="700"
-frameborder="0">
-</iframe>
-
-</section>
-
-
-<section id="gallery">
-
-<h2>Gallery</h2>
-
-<img src="assets/images/factory.jpg">
-<img src="assets/images/truck.jpg">
-<img src="assets/images/render-installation.jpg">
-
-</section>
-
-
-<section id="credits">
-
-<h2>Credits</h2>
-
-<p>
-
-Concept, sound design, data sonification,
-distributed system architecture, software development
-
-<br><br>
-
-Nehemias Isai Alvarado Juarez
-
-</p>
-
-</section>
-
-
-<footer>
-
-<p>
-Nehemias Isai Alvarado Juarez
-<br>
-Ireland
-<br>
-isaialvaradojuarez@gmail.com
-</p>
-
-</footer>
-
+  <footer class="footer">
+    <div class="wrap footer-line">
+      <div>Machines Listening to Themselves · 2026</div>
+      <div>
+        <a href="mailto:isaialvaradojuarez@gmail.com">isaialvaradojuarez@gmail.com</a>
+        ·
+        <a href="https://www.instagram.com/isaixmusic/" target="_blank" rel="noreferrer">Instagram</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
