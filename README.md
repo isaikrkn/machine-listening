@@ -41,13 +41,6 @@ The installation is designed as an immersive audiovisual environment consisting 
 - real-time generative visual engine
 - industrial field recordings and sensor data
 
-## Artist
-
-Nehemias Isai Alvarado Juarez  
-Composer, sound artist, and creative technologist.
-
-Currently based in Ireland, his work explores the intersection of sound, data-driven systems, and industrial environments.
-
 ## Website
 
 https://isaikrkn.github.io/machine-listening/
